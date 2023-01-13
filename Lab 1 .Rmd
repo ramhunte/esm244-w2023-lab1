@@ -14,3 +14,68 @@ library(sf)
 library(tmap)
 ```
 
+order of operation to get info onto github
+1) commit 
+  go to "Git" tab and press commit
+2) Pull
+  blue down arrow - pulls info from online repository that may have been added since you worked on it. brings it to you local computer
+3) Push
+  puhes data back to github 
+  
+  
+  in terminal 
+  ls - tells you whats in the repository 
+  
+  
+  
+  
+  
+  ### Read in the data
+```{r}
+sf_trees <- read_csv(here('data', 'sf_trees', 'sf_trees.csv'))
+
+#new data frame with just top 5 legal status trees 
+top_5_status <- sf_trees %>% 
+  group_by(legal_status) %>%
+  summarize(tree_count=n()) %>%
+  #finds the maximum values of the variable tree_count and slice out just the top 5
+  slice_max(tree_count, n=5) %>%
+  arrange(-tree_count)
+
+ggplot(data = top_5_status, aes(x= fct_reorder(legal_status, tree_count), y = tree_count)) + 
+#re order into how many trees are in eahc one 
+  geom_col() +
+  labs( y = "Tree Count ", x = "Legal Status") + 
+ #swap the axis 
+   coord_flip() +
+theme_minimal()
+```
+  
+in console, summary(sf_trees) 
+basic summary of data
+
+names(sf_trees)
+shows the names of the variables
+
+in console, 
+sf_trees %>% group_by(legal_status) %>% summarize(tree_count = n())
+
+shows how many observations there are for each category within a variable 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
