@@ -63,10 +63,39 @@ sf_trees %>% group_by(legal_status) %>% summarize(tree_count = n())
 shows how many observations there are for each category within a variable 
   
   
-  
-  
-  
-  
+### filtering: keep observations where legal status is "permitted site" an dcare taker is "MTA"
+```{r}
+permitted_mta <- sf_trees %>% 
+  filter(legal_status == "Permitted Sites" & caretaker == "MTA")
+```
+
+
+### Keep blackwood acacia trees, only lega status, date, lattitude, longitude colomns
+```{r}
+blackwood_acaia <- sf_trees %>%
+  #str_detect looks for words withion a colomn even if there are other words
+  filter(str_detect(species, "Blackwood Acacia")) %>%
+  select(legal_status, date, latitude, longitude )
+
+### make a plot 
+
+ggplot(data = blackwood_acaia, aes(x = longitude, y = latitude)) +
+  geom_point()
+```
+
+### use tidyr :: separate() to separate one colomn into multiple 
+```{r}
+sf_trees_separate <- sf_trees %>%
+  separate(species, into = c("spp_scientific", "species_common"), sep = ' :: ')
+```
+
+### use tidy::unite to rejoin multiple colomns 
+```{r}
+sf_trees_unite <- sf_trees %>%
+  unite("id status", tree_id:species, sep="_NEW_")
+```
+
+
   
   
   
