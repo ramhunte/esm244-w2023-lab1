@@ -72,7 +72,7 @@ permitted_mta <- sf_trees %>%
 
 ### Keep blackwood acacia trees, only lega status, date, lattitude, longitude colomns
 ```{r}
-blackwood_acaia <- sf_trees %>%
+blackwood_acacia <- sf_trees %>%
   #str_detect looks for words withion a colomn even if there are other words
   filter(str_detect(species, "Blackwood Acacia")) %>%
   select(legal_status, date, latitude, longitude )
@@ -96,12 +96,51 @@ sf_trees_unite <- sf_trees %>%
 ```
 
 
+### Make some actual maps !
+
+```{r}
+blackwood_acacia_sf <- blackwood_acacia %>%
+  drop_na(longitude, latitude) %>%
+  #creating simple features spatial data creating a geometry point
+  st_as_sf(coords = c("longitude", "latitude"))
+#indicating that lattitude and longitude are degrees and not meters or feet
+st_crs(blackwood_acacia_sf) <- 4326
+
+ggplot(data = blackwood_acacia_sf) +
+  #refers to the geometry colomn to choose the aesthetics of a map b/c it knows that we are talking about lat and long
+  geom_sf(color= "darkgreen") + 
+  theme_minimal()
+
+```
+
+### read in SF streets data 
+```{r}
+sf_map_sf <- read_sf(here("data", "sf_map", "tl_2017_06075_roads.shp")) %>%
+  # transfor 4269 coordinates reference number to 4326
+  st_transform(4326)
+st_crs(sf_map_sf)
+```
+
+
+
+### MAPPING IT OUT 
+```{r}
+ggplot() + 
+  geom_sf(data =sf_map_sf, size = 0.1, color = "darkgrey") + 
+  geom_sf(data = blackwood_acacia_sf, color = "red", size = 0.5) + 
+  #gets rid of axis
+  theme_void() + 
+  labs(title= "Blackwood Acacias in San Francisco")
+```
+
   
-  
-  
-  
-  
-  
+### Interactive map 
+```{r}
+tmap_mode("view")
+tm_shape(blackwood_acacia_sf) +
+  tm_dots()
+```
+
   
   
   
